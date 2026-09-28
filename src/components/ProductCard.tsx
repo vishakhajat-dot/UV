@@ -31,7 +31,7 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
         </div>
       </Link>
       <div className="flex flex-1 flex-col gap-1 p-4">
-        <span className="text-xs font-semibold uppercase tracking-wide text-brand-red">{product.brand}</span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-brand-primary">{product.brand}</span>
         <Link href={`/products/${product.slug}`} className="font-semibold text-brand-navy hover:underline dark:text-white">
           {product.name}
         </Link>

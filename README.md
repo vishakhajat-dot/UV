@@ -4,7 +4,7 @@ A full website for Mahalaxmi Auto Agency (Pune) with a product catalog, cart & o
 checkout, WhatsApp/email/call contact links, automatic PDF bill generation, and an admin panel
 to manage products and orders.
 
-Stack: Next.js 14 (App Router) + TypeScript + Tailwind CSS + Prisma + SQLite.
+Stack: Next.js 14 (App Router) + TypeScript + Tailwind CSS + Prisma + PostgreSQL (Neon).
 
 ## Running locally
 
@@ -36,6 +36,27 @@ Default admin login is set via `ADMIN_USERNAME` / `ADMIN_PASSWORD` in your local
   pricing, featured flag) and view/manage orders (update status, mark paid/unpaid, message the
   customer on WhatsApp, download the bill).
 
+## Billing & shop management (admin)
+
+The admin panel (`/admin`) also works as a Vyapar-style billing app:
+
+- **Bills** (`/admin/billing`): GST tax invoices numbered `MAA/2026-27/0001` per financial year.
+  CGST + SGST for Maharashtra customers, IGST for other states, rates with or without GST, per-item
+  discount, round-off, amount in words, part payments. The PDF prints the logo, agency name, owner
+  name and email, GSTIN, bank/UPI details and terms. Cancelling a bill keeps its number (marked
+  CANCELLED) and returns the stock. Website orders have a **Create GST Bill** button.
+- **Customers**: saved automatically from bills (by phone number) or added by hand, with total
+  billed, balance due and a WhatsApp payment reminder.
+- **Items**: selling price, purchase/cost price (admin only, never sent to the storefront), HSN
+  code, GST rate, low-stock alert level and photo upload (resized in the browser, stored in the
+  database, served from `/api/products/<id>/image`).
+- **Stock**: stock in (purchases, which update the weighted-average cost), corrections, full
+  movement history, stock value and low/out-of-stock lists. Bills reduce stock automatically.
+- **Expenses** and **Profit & Loss**: sales before GST, cost of goods sold, gross and net profit,
+  item-wise profit and a GST summary (CGST/SGST/IGST, B2B vs B2C) for any date range.
+- **Settings**: everything printed on bills (GSTIN, name on bill, bank details, bill number prefix,
+  terms), editable without a redeploy.
+
 ## Editing your real product catalog
 
 The seed data (`prisma/seed.js`) includes placeholder products per brand/category with estimated
@@ -53,6 +74,7 @@ or edit `prisma/seed.js` and re-run `npm run db:seed`.
 | `NEXT_PUBLIC_PHONE_PRIMARY` / `_SECONDARY` | Click-to-call numbers |
 | `NEXT_PUBLIC_EMAIL` | Contact email |
 | `NEXT_PUBLIC_ADDRESS` | Shown in the footer, contact page and on the map |
+| `INVOICE_OWNER_NAME` | Optional. Default name printed on bills until it is set in Admin → Settings (defaults to Utkarsh Chavan) |
 
 ## Deploying (when you're ready)
 

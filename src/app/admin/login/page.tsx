@@ -38,9 +38,11 @@ function AdminLoginForm() {
   };
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center bg-brand-light px-4 dark:bg-gray-950">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-light via-white to-sky-100 px-4">
       <form onSubmit={handleSubmit} className="card w-full max-w-sm space-y-4 p-8">
         <div className="text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/logo.png" alt="Mahalaxmi Auto Agency" className="mx-auto mb-4 w-44 rounded-xl shadow-md" />
           <h1 className="text-xl font-bold text-brand-navy dark:text-white">Admin Login</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Mahalaxmi Auto Agency</p>
         </div>
@@ -63,7 +65,7 @@ function AdminLoginForm() {
             className="input"
           />
         </div>
-        {error && <p className="text-sm text-brand-red">{error}</p>}
+        {error && <p className="text-sm text-brand-primary">{error}</p>}
         <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-60">
           {loading ? "Signing in..." : "Sign In"}
         </button>

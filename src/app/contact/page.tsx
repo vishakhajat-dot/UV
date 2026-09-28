@@ -13,7 +13,7 @@ export default function ContactPage() {
   return (
     <div className="container-page py-14">
       <div className="text-center">
-        <span className="text-sm font-semibold uppercase tracking-wide text-brand-red">Get In Touch</span>
+        <span className="text-sm font-semibold uppercase tracking-wide text-brand-primary">Get In Touch</span>
         <h1 className="mt-2 text-3xl font-extrabold text-brand-navy sm:text-4xl dark:text-white">Contact Us</h1>
         <p className="mx-auto mt-2 max-w-xl text-gray-600 dark:text-gray-400">
           Reach out for product enquiries, bulk/dealer pricing, or order support &mdash; we typically
@@ -29,10 +29,10 @@ export default function ContactPage() {
             </IconWrap>
             <div>
               <h3 className="font-semibold text-brand-navy dark:text-white">Call Us</h3>
-              <a href={telLink(SITE.phonePrimary)} className="block text-sm text-gray-600 hover:text-brand-red dark:text-gray-400">
+              <a href={telLink(SITE.phonePrimary)} className="block text-sm text-gray-600 hover:text-brand-primary dark:text-gray-400">
                 {SITE.phonePrimary}
               </a>
-              <a href={telLink(SITE.phoneSecondary)} className="block text-sm text-gray-600 hover:text-brand-red dark:text-gray-400">
+              <a href={telLink(SITE.phoneSecondary)} className="block text-sm text-gray-600 hover:text-brand-primary dark:text-gray-400">
                 {SITE.phoneSecondary}
               </a>
             </div>
@@ -44,7 +44,7 @@ export default function ContactPage() {
             </IconWrap>
             <div>
               <h3 className="font-semibold text-brand-navy dark:text-white">Email Us</h3>
-              <a href={`mailto:${SITE.email}`} className="block text-sm text-gray-600 hover:text-brand-red dark:text-gray-400">
+              <a href={`mailto:${SITE.email}`} className="block text-sm text-gray-600 hover:text-brand-primary dark:text-gray-400">
                 {SITE.email}
               </a>
             </div>
@@ -90,7 +90,7 @@ export default function ContactPage() {
 
 function IconWrap({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-light text-brand-navy dark:bg-gray-800 dark:text-brand-gold">
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-light text-brand-navy dark:bg-gray-800 dark:text-brand-primary">
       {children}
     </div>
   );

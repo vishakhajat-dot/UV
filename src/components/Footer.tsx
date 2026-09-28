@@ -5,28 +5,28 @@ const BRANDS = ["Radhe Bulbs", "Vasko Bulbs", "KSV Bulbs", "Canon Wiring", "Sunn
 
 export default function Footer() {
   return (
-    <footer className="mt-16 bg-brand-navy text-gray-300">
+    <footer className="mt-16 border-t border-sky-100 bg-brand-light text-slate-600">
       <div className="container-page grid gap-10 py-12 md:grid-cols-4">
         <div>
-          <h3 className="text-lg font-bold text-white">{SITE.name}</h3>
-          <p className="mt-3 text-sm leading-relaxed text-gray-400">
+          <h3 className="text-lg font-bold text-brand-navy">{SITE.name}</h3>
+          <p className="mt-3 text-sm leading-relaxed text-slate-600">
             Trusted auto parts &amp; accessories supplier in Pune since 1996, serving workshops,
             retailers and spare parts dealers with quality electrical components and accessories.
           </p>
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-brand-gold">Quick Links</h4>
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-brand-primary">Quick Links</h4>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/products" className="hover:text-white">Products</Link></li>
-            <li><Link href="/about" className="hover:text-white">About Us</Link></li>
-            <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-            <li><Link href="/cart" className="hover:text-white">Cart &amp; Checkout</Link></li>
+            <li><Link href="/products" className="hover:text-brand-primary">Products</Link></li>
+            <li><Link href="/about" className="hover:text-brand-primary">About Us</Link></li>
+            <li><Link href="/contact" className="hover:text-brand-primary">Contact</Link></li>
+            <li><Link href="/cart" className="hover:text-brand-primary">Cart &amp; Checkout</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-brand-gold">Authorized Brands</h4>
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-brand-primary">Authorized Brands</h4>
           <ul className="mt-3 space-y-2 text-sm">
             {BRANDS.map((b) => (
               <li key={b}>{b}</li>
@@ -35,16 +35,16 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wide text-brand-gold">Contact Us</h4>
-          <ul className="mt-3 space-y-2 text-sm text-gray-400">
+          <h4 className="text-sm font-semibold uppercase tracking-wide text-brand-primary">Contact Us</h4>
+          <ul className="mt-3 space-y-2 text-sm text-slate-600">
             <li>{SITE.address}</li>
             <li>
-              <a href={telLink(SITE.phonePrimary)} className="hover:text-white">{SITE.phonePrimary}</a>
+              <a href={telLink(SITE.phonePrimary)} className="hover:text-brand-primary">{SITE.phonePrimary}</a>
               {" / "}
-              <a href={telLink(SITE.phoneSecondary)} className="hover:text-white">{SITE.phoneSecondary}</a>
+              <a href={telLink(SITE.phoneSecondary)} className="hover:text-brand-primary">{SITE.phoneSecondary}</a>
             </li>
             <li>
-              <a href={`mailto:${SITE.email}`} className="hover:text-white">{SITE.email}</a>
+              <a href={`mailto:${SITE.email}`} className="hover:text-brand-primary">{SITE.email}</a>
             </li>
             <li>
               <a
@@ -60,7 +60,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 py-4 text-center text-xs text-gray-500">
+      <div className="border-t border-sky-200 py-4 text-center text-xs text-slate-500">
         &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
       </div>
     </footer>

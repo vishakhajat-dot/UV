@@ -24,8 +24,8 @@ type InvoiceOrder = {
 const PAGE_WIDTH = 595.28;
 const PAGE_HEIGHT = 841.89;
 const MARGIN = 50;
-const NAVY = rgb(0.043, 0.145, 0.271);
-const RED = rgb(0.784, 0.063, 0.18);
+const NAVY = rgb(0.043, 0.227, 0.4);
+const ACCENT = rgb(0.102, 0.451, 0.784);
 const GRAY = rgb(0.4, 0.4, 0.4);
 const LIGHT = rgb(0.96, 0.97, 0.98);
 
@@ -58,7 +58,7 @@ export async function generateInvoicePdf(order: InvoiceOrder): Promise<Uint8Arra
     start: { x: MARGIN, y },
     end: { x: PAGE_WIDTH - MARGIN, y },
     thickness: 1.5,
-    color: RED,
+    color: ACCENT,
   });
   y -= 26;
 
@@ -149,7 +149,7 @@ export async function generateInvoicePdf(order: InvoiceOrder): Promise<Uint8Arra
     { x: MARGIN, y, size: 8, font, color: GRAY }
   );
   y -= 20;
-  page.drawText(`Thank you for choosing ${SITE.name}!`, { x: MARGIN, y, size: 10, font: bold, color: RED });
+  page.drawText(`Thank you for choosing ${SITE.name}!`, { x: MARGIN, y, size: 10, font: bold, color: ACCENT });
 
   return pdf.save();
 }

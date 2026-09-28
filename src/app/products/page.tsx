@@ -47,7 +47,7 @@ export default async function ProductsPage({
   return (
     <div className="container-page py-10">
       <div className="text-center">
-        <span className="text-sm font-semibold uppercase tracking-wide text-brand-red">Catalog</span>
+        <span className="text-sm font-semibold uppercase tracking-wide text-brand-primary">Catalog</span>
         <h1 className="mt-2 text-3xl font-extrabold text-brand-navy dark:text-white">Our Products</h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
           Genuine electrical parts &amp; accessories for workshops, retailers and dealers.
@@ -72,7 +72,7 @@ export default async function ProductsPage({
           href="/products"
           className={`rounded-full px-4 py-1.5 text-sm font-medium ${
             !activeCategory && !activeGroup
-              ? "bg-brand-navy text-white"
+              ? "bg-brand-primary text-white"
               : "bg-brand-light text-brand-navy hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
           }`}
         >
@@ -84,8 +84,8 @@ export default async function ProductsPage({
             href={`/products?group=${encodeURIComponent(g)}`}
             className={`rounded-full px-4 py-1.5 text-sm font-medium ${
               activeGroup === g && !activeCategory
-                ? "bg-brand-red text-white"
-                : "bg-brand-gold/20 text-brand-navy hover:bg-brand-gold/30 dark:text-brand-gold"
+                ? "bg-brand-primary text-white"
+                : "bg-brand-light text-brand-navy hover:bg-brand-sky/40 dark:text-brand-primary"
             }`}
           >
             {g}
@@ -100,7 +100,7 @@ export default async function ProductsPage({
             href={`/products?category=${c.slug}`}
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               activeCategory === c.slug
-                ? "bg-brand-navy text-white"
+                ? "bg-brand-primary text-white"
                 : "bg-brand-light text-brand-navy hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             }`}
           >

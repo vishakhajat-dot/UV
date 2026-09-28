@@ -13,7 +13,7 @@ export default function AboutPage() {
   return (
     <div className="container-page py-14">
       <div className="mx-auto max-w-3xl">
-        <span className="text-sm font-semibold uppercase tracking-wide text-brand-red">About Us</span>
+        <span className="text-sm font-semibold uppercase tracking-wide text-brand-primary">About Us</span>
         <h1 className="mt-2 text-3xl font-extrabold text-brand-navy sm:text-4xl dark:text-white">
           Mahalaxmi Auto Agency
         </h1>
@@ -44,7 +44,7 @@ export default function AboutPage() {
           <ul className="mt-4 grid gap-2 sm:grid-cols-2">
             {BRANDS.map((b) => (
               <li key={b} className="flex items-center gap-2 text-brand-navy dark:text-white">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand-red" />
+                <span className="h-1.5 w-1.5 rounded-full bg-brand-primary" />
                 <span className="font-medium">{b}</span>
               </li>
             ))}

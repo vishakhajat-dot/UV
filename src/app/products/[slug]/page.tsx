@@ -24,9 +24,9 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
   return (
     <div className="container-page py-10">
       <nav className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-        <Link href="/products" className="hover:text-brand-red">Products</Link>
+        <Link href="/products" className="hover:text-brand-primary">Products</Link>
         <span className="mx-2">/</span>
-        <Link href={`/products?category=${product.category.slug}`} className="hover:text-brand-red">
+        <Link href={`/products?category=${product.category.slug}`} className="hover:text-brand-primary">
           {product.category.name}
         </Link>
         <span className="mx-2">/</span>
@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
         </div>
 
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wide text-brand-red">{product.brand}</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-brand-primary">{product.brand}</span>
           <h1 className="mt-1 text-2xl font-extrabold text-brand-navy sm:text-3xl dark:text-white">{product.name}</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Category: {product.category.name}</p>
 

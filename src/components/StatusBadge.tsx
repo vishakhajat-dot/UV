@@ -5,6 +5,9 @@ const COLORS: Record<string, string> = {
   CANCELLED: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
   UNPAID: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400",
   PAID: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
+  PARTIAL: "bg-amber-100 text-amber-800",
+  LOW: "bg-amber-100 text-amber-800",
+  OUT: "bg-red-100 text-red-700",
 };
 
 export default function StatusBadge({ status }: { status: string }) {

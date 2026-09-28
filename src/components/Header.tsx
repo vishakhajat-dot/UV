@@ -5,7 +5,6 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useCart } from "./CartProvider";
 import { SITE, telLink } from "@/lib/whatsapp";
-import ThemeToggle from "./ThemeToggle";
 import SiteLogo from "./SiteLogo";
 
 const NAV_LINKS = [
@@ -21,16 +20,16 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95">
-      <div className="bg-brand-navy text-white">
+    <header className="sticky top-0 z-40 border-b border-sky-100 bg-white/95 backdrop-blur">
+      <div className="bg-brand-primary text-white">
         <div className="container-page flex flex-wrap items-center justify-between gap-2 py-1.5 text-xs">
           <span>Trusted Auto Parts &amp; Accessories Supplier in Pune since 1996</span>
           <div className="flex items-center gap-4">
-            <a href={telLink(SITE.phonePrimary)} className="hover:text-brand-gold">
+            <a href={telLink(SITE.phonePrimary)} className="hover:underline">
               Call: {SITE.phonePrimary}
             </a>
             <span className="hidden sm:inline">|</span>
-            <a href={`mailto:${SITE.email}`} className="hidden hover:text-brand-gold sm:inline">
+            <a href={`mailto:${SITE.email}`} className="hidden hover:underline sm:inline">
               {SITE.email}
             </a>
           </div>
@@ -38,12 +37,12 @@ export default function Header() {
       </div>
       <div className="container-page flex items-center justify-between py-3">
         <Link href="/" className="flex items-center gap-2">
-          <SiteLogo />
+          <SiteLogo className="h-11 sm:h-12" />
           <span>
             <span className="block text-lg font-bold leading-tight text-brand-navy dark:text-white">
               Mahalaxmi Auto Agency
             </span>
-            <span className="block text-xs font-medium text-brand-red">Since 1996 &middot; Pune</span>
+            <span className="block text-xs font-medium text-brand-primary">Since 1996 &middot; Pune</span>
           </span>
         </Link>
 
@@ -52,8 +51,8 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium transition hover:text-brand-red ${
-                pathname === link.href ? "text-brand-red" : "text-brand-navy dark:text-gray-200"
+              className={`text-sm font-medium transition hover:text-brand-primary ${
+                pathname === link.href ? "text-brand-primary" : "text-brand-navy dark:text-gray-200"
               }`}
             >
               {link.label}
@@ -62,14 +61,13 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
           <Link
             href="/cart"
             className="relative flex items-center gap-1.5 rounded-md border border-brand-navy px-3 py-2 text-sm font-semibold text-brand-navy hover:bg-brand-light dark:border-gray-500 dark:text-gray-100 dark:hover:bg-gray-800"
           >
             Cart
             {totalItems > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-red text-xs font-bold text-white">
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white">
                 {totalItems}
               </span>
             )}

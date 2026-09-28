@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-export default function SiteLogo({ className = "" }: { className?: string }) {
+export default function SiteLogo({ className = "h-12" }: { className?: string }) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
     return (
-      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-navy text-lg font-bold text-white ${className}`}>
+      <span className={`flex aspect-[4/3] shrink-0 items-center justify-center rounded-lg bg-brand-navy text-lg font-bold text-white ${className}`}>
         MA
       </span>
     );
@@ -18,7 +18,7 @@ export default function SiteLogo({ className = "" }: { className?: string }) {
     <img
       src="/images/logo.png"
       alt="Mahalaxmi Auto Agency"
-      className={`h-10 w-10 shrink-0 rounded-full object-contain ${className}`}
+      className={`w-auto shrink-0 rounded-lg object-contain shadow-sm ${className}`}
       onError={() => setFailed(true)}
     />
   );

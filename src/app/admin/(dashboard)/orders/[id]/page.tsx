@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import OrderStatusControls from "@/components/OrderStatusControls";
@@ -8,7 +9,7 @@ export const revalidate = 0;
 export default async function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   const order = await prisma.order.findUnique({
     where: { id: params.id },
-    include: { items: true },
+    include: { items: true, invoice: { select: { id: true, invoiceNumber: true } } },
   });
   if (!order) notFound();
 
@@ -47,8 +48,17 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
+            {order.invoice ? (
+              <Link href={`/admin/billing/${order.invoice.id}`} className="btn-primary">
+                GST Bill {order.invoice.invoiceNumber}
+              </Link>
+            ) : (
+              <Link href={`/admin/billing/new?order=${order.id}`} className="btn-primary">
+                Create GST Bill
+              </Link>
+            )}
             <a href={`/api/orders/${order.id}/invoice`} target="_blank" rel="noopener noreferrer" className="btn-secondary">
-              Download / Print Bill (PDF)
+              Quotation PDF
             </a>
             <a
               href={whatsappLink(
@@ -80,7 +90,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             <div>
               <dt className="text-gray-500 dark:text-gray-400">Phone</dt>
               <dd className="font-medium">
-                <a href={telLink(order.customerPhone)} className="hover:text-brand-red">{order.customerPhone}</a>
+                <a href={telLink(order.customerPhone)} className="hover:text-brand-primary">{order.customerPhone}</a>
               </dd>
             </div>
             {order.customerEmail && (

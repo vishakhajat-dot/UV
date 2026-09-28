@@ -37,16 +37,16 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="bg-gradient-to-br from-brand-navy to-brand-blue text-white">
+      <section className="bg-gradient-to-br from-brand-light via-white to-sky-100 text-brand-navy">
         <div className="container-page grid gap-8 py-16 md:grid-cols-2 md:items-center md:py-24">
           <div>
-            <span className="inline-block rounded-full bg-brand-gold/20 px-3 py-1 text-xs font-semibold text-brand-gold">
+            <span className="inline-block rounded-full bg-white px-3 shadow-sm ring-1 ring-sky-100 py-1 text-xs font-semibold text-brand-primary">
               Since 1996 &middot; Guruwar Peth, Pune
             </span>
             <h1 className="mt-4 text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">
               Trusted Auto Parts &amp; Accessories Supplier in Pune
             </h1>
-            <p className="mt-4 max-w-xl text-gray-200">
+            <p className="mt-4 max-w-xl text-slate-600">
               For more than 25 years, {SITE.name} has supplied premium electrical components and
               accessories to workshops, retailers, and spare parts dealers across Pune.
             </p>
@@ -62,14 +62,13 @@ export default async function HomePage() {
               </a>
             </div>
           </div>
-          <div className="hidden justify-self-end md:block">
-            <div className="grid grid-cols-2 gap-4">
-              {BRANDS.slice(0, 4).map((b) => (
-                <div key={b.slug} className="rounded-lg bg-white/10 px-5 py-4 text-center backdrop-blur">
-                  <span className="font-semibold text-white">{b.name}</span>
-                </div>
-              ))}
-            </div>
+          <div className="justify-self-center md:justify-self-end">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/logo.png"
+              alt="Mahalaxmi Auto Agency logo"
+              className="w-full max-w-md rounded-2xl shadow-xl shadow-sky-200/70 ring-1 ring-sky-100"
+            />
           </div>
         </div>
       </section>
@@ -97,7 +96,7 @@ export default async function HomePage() {
               <Link
                 key={g.name}
                 href={`/products?group=${encodeURIComponent(g.name)}`}
-                className="card flex flex-col gap-1 p-5 text-center transition hover:border-brand-red"
+                className="card flex flex-col gap-1 p-5 text-center transition hover:border-brand-primary"
               >
                 <span className="font-semibold text-brand-navy dark:text-white">{g.name}</span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">{g.desc}</span>
@@ -119,7 +118,7 @@ export default async function HomePage() {
               <Link
                 key={b.slug}
                 href={`/products?category=${b.slug}`}
-                className="card flex items-center justify-center px-4 py-6 text-center text-sm font-semibold text-brand-navy transition hover:border-brand-red hover:text-brand-red dark:text-white dark:hover:text-brand-red"
+                className="card flex items-center justify-center px-4 py-6 text-center text-sm font-semibold text-brand-navy transition hover:border-brand-primary hover:text-brand-primary dark:text-white dark:hover:text-brand-primary"
               >
                 {b.name}
               </Link>
@@ -132,7 +131,7 @@ export default async function HomePage() {
         <section className="container-page py-14">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-brand-navy dark:text-white">Featured Products</h2>
-            <Link href="/products" className="text-sm font-semibold text-brand-red hover:underline">
+            <Link href="/products" className="text-sm font-semibold text-brand-primary hover:underline">
               View all &rarr;
             </Link>
           </div>
@@ -157,10 +156,10 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section className="bg-brand-navy py-14 text-white">
+      <section className="bg-brand-primary py-14 text-white">
         <div className="container-page flex flex-col items-center gap-4 text-center">
           <h2 className="text-2xl font-bold">Need Bulk Pricing or a Custom Quote?</h2>
-          <p className="max-w-xl text-gray-300">
+          <p className="max-w-xl text-sky-50">
             Workshops, retailers and spare parts dealers can connect with us directly for bulk orders
             and dealer pricing.
           </p>

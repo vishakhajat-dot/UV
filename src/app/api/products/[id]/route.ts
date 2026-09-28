@@ -1,26 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
-import { productSchema } from "@/lib/validation";
-import { verifyAdminSession, ADMIN_COOKIE_NAME } from "@/lib/auth";
+import { productAdminSchema } from "@/lib/validation";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await verifyAdminSession(req.cookies.get(ADMIN_COOKIE_NAME)?.value);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
 
   const body = await req.json().catch(() => null);
-  const parsed = productSchema.safeParse(body);
+  const parsed = productAdminSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const product = await prisma.product.update({ where: { id: params.id }, data: parsed.data });
+  // Stock is deliberately not editable here: it moves through bills and the Stock page
+  // so there is always a record of why it changed.
+  const { stock: _stock, ...data } = parsed.data;
+  const product = await prisma.product.update({
+    where: { id: params.id },
+    data: { ...data, hsnCode: data.hsnCode || null },
+  });
   return NextResponse.json({ product });
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await verifyAdminSession(req.cookies.get(ADMIN_COOKIE_NAME)?.value);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const denied = await requireAdmin(req);
+  if (denied) return denied;
 
-  await prisma.product.delete({ where: { id: params.id } });
+  try {
+    await prisma.product.delete({ where: { id: params.id } });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2003") {
+      return NextResponse.json(
+        { error: "This product appears in website orders, so it can't be deleted. Set its stock to 0 instead." },
+        { status: 409 }
+      );
+    }
+    throw err;
+  }
   return NextResponse.json({ ok: true });
 }

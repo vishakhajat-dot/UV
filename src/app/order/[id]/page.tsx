@@ -48,7 +48,7 @@ export default async function OrderConfirmationPage({ params }: { params: { id: 
         <div className="card mt-8 text-left">
           <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
             <span className="font-semibold text-brand-navy dark:text-white">Order #{order.orderNumber}</span>
-            <span className="rounded-full bg-brand-gold/20 px-3 py-1 text-xs font-semibold text-brand-gold">
+            <span className="rounded-full bg-brand-light px-3 py-1 text-xs font-semibold text-brand-primary">
               {order.status}
             </span>
           </div>
@@ -77,7 +77,7 @@ export default async function OrderConfirmationPage({ params }: { params: { id: 
           </a>
         </div>
 
-        <Link href="/products" className="mt-6 inline-block text-sm font-semibold text-brand-red hover:underline">
+        <Link href="/products" className="mt-6 inline-block text-sm font-semibold text-brand-primary hover:underline">
           &larr; Continue Shopping
         </Link>
       </div>

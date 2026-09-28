@@ -12,7 +12,7 @@ export default async function AdminOrdersPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-brand-navy dark:text-white">Orders</h1>
+      <h1 className="text-2xl font-bold text-brand-navy dark:text-white">Website Orders</h1>
 
       <div className="card mt-6 overflow-x-auto">
         <table className="w-full text-left text-sm">

@@ -135,7 +135,7 @@ export default function CheckoutPage() {
                   key={opt.value}
                   className={`flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm dark:text-gray-100 ${
                     form.paymentMethod === opt.value
-                      ? "border-brand-navy bg-brand-light dark:border-brand-gold dark:bg-gray-800"
+                      ? "border-brand-navy bg-brand-light dark:border-brand-sky dark:bg-gray-800"
                       : "border-gray-300 dark:border-gray-600"
                   }`}
                 >
@@ -156,7 +156,7 @@ export default function CheckoutPage() {
             </p>
           </Field>
 
-          {error && <p className="text-sm text-brand-red">{error}</p>}
+          {error && <p className="text-sm text-brand-primary">{error}</p>}
 
           <button type="submit" disabled={submitting} className="btn-primary w-full disabled:opacity-60">
             {submitting ? "Placing Order..." : "Place Order"}

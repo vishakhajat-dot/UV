@@ -16,21 +16,40 @@ model Category {
 }
 
 model Product {
-  id          String      @id @default(cuid())
-  name        String
-  slug        String      @unique
-  brand       String
-  description String
-  price       Float
-  unit        String      @default("piece")
-  stock       Int         @default(0)
-  imageUrl    String?
-  featured    Boolean     @default(false)
-  categoryId  String
-  category    Category    @relation(fields: [categoryId], references: [id])
-  orderItems  OrderItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id           String          @id @default(cuid())
+  name         String
+  slug         String          @unique
+  brand        String
+  description  String
+  price        Float
+  // Purchase cost per unit (weighted average across stock-in entries). Admin-only:
+  // never select this into anything the storefront or public API returns.
+  costPrice    Float           @default(0)
+  hsnCode      String?
+  gstRate      Float           @default(18)
+  lowStockAt   Int             @default(5)
+  unit         String          @default("piece")
+  stock        Int             @default(0)
+  imageUrl     String?
+  featured     Boolean         @default(false)
+  categoryId   String
+  category     Category        @relation(fields: [categoryId], references: [id])
+  image        ProductImage?
+  orderItems   OrderItem[]
+  invoiceItems InvoiceItem[]
+  stockMoves   StockMovement[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+// Uploaded product photos live in the database (resized in the browser first) so the
+// site needs no separate file storage. Served by /api/products/[id]/image.
+model ProductImage {
+  productId String   @id
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  data      Bytes
+  mimeType  String
+  updatedAt DateTime @updatedAt
 }
 
 model Order {
@@ -47,6 +66,7 @@ model Order {
   paymentMethod   String?
   subtotal        Float
   items           OrderItem[]
+  invoice         Invoice?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
@@ -60,4 +80,122 @@ model OrderItem {
   productName String
   price       Float
   quantity    Int
+}
+
+model Customer {
+  id           String    @id @default(cuid())
+  name         String
+  businessName String?
+  phone        String
+  email        String?
+  address      String?
+  state        String    @default("Maharashtra")
+  gstin        String?
+  notes        String?
+  invoices     Invoice[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([phone])
+}
+
+// A GST tax invoice. Customer details are copied onto the invoice when it is made, so
+// editing a customer later never changes a bill that has already been issued.
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  invoiceDate   DateTime      @default(now())
+  customerId    String?
+  customer      Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  orderId       String?       @unique
+  order         Order?        @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  billName      String
+  billBusiness  String?
+  billPhone     String?
+  billEmail     String?
+  billAddress   String?
+  billGstin     String?
+  placeOfSupply String
+  interState    Boolean       @default(false)
+  pricesIncTax  Boolean       @default(true)
+  taxableTotal  Float
+  cgst          Float
+  sgst          Float
+  igst          Float
+  roundOff      Float
+  total         Float
+  costTotal     Float
+  amountPaid    Float         @default(0)
+  paymentMode   String?
+  status        String        @default("ACTIVE")
+  notes         String?
+  items         InvoiceItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([invoiceDate])
+}
+
+model InvoiceItem {
+  id           String   @id @default(cuid())
+  invoiceId    String
+  invoice      Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name         String
+  hsnCode      String?
+  unit         String   @default("piece")
+  quantity     Int
+  rate         Float
+  discountPct  Float    @default(0)
+  gstRate      Float
+  taxableValue Float
+  gstAmount    Float
+  lineTotal    Float
+  // Cost per unit at the time of sale, so profit reports stay right after costs change.
+  unitCost     Float    @default(0)
+}
+
+model StockMovement {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type      String // PURCHASE | SALE | SALE_CANCELLED | ADJUSTMENT
+  change    Int
+  unitCost  Float?
+  note      String?
+  invoiceId String?
+  createdAt DateTime @default(now())
+
+  @@index([productId, createdAt])
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  date      DateTime
+  category  String
+  amount    Float
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([date])
+}
+
+// Single row (id "default") holding what gets printed on every bill.
+model BusinessSettings {
+  id            String   @id @default("default")
+  businessName  String
+  ownerName     String
+  ownerEmail    String
+  phone         String
+  address       String
+  state         String   @default("Maharashtra")
+  gstin         String?
+  bankName      String?
+  accountNumber String?
+  ifsc          String?
+  upiId         String?
+  invoicePrefix String   @default("MAA")
+  terms         String?
+  updatedAt     DateTime @updatedAt
 }
