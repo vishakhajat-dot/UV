@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { customerSchema } from "@/lib/validation";
+import type { customerSchema, vendorSchema } from "@/lib/validation";
 
 export function customerData(data: z.infer<typeof customerSchema>) {
   return {
@@ -10,6 +10,18 @@ export function customerData(data: z.infer<typeof customerSchema>) {
     address: data.address || null,
     state: data.state,
     gstin: data.gstin ? data.gstin.toUpperCase() : null,
+    notes: data.notes || null,
+  };
+}
+
+export function vendorData(data: z.infer<typeof vendorSchema>) {
+  return {
+    name: data.name,
+    phone: data.phone || null,
+    email: data.email || null,
+    gstin: data.gstin ? data.gstin.toUpperCase() : null,
+    address: data.address || null,
+    state: data.state,
     notes: data.notes || null,
   };
 }

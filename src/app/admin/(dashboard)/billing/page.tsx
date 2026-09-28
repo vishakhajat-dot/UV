@@ -79,6 +79,7 @@ export default async function BillsPage({
               <th className="px-4 py-3 text-right">Amount</th>
               <th className="px-4 py-3 text-right">Balance</th>
               <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">PDF</th>
             </tr>
           </thead>
           <tbody className="tabular divide-y divide-sky-50">
@@ -99,12 +100,17 @@ export default async function BillsPage({
                   <td className="px-4 py-3 text-right font-medium">{formatINR(inv.total)}</td>
                   <td className="px-4 py-3 text-right">{formatINR(round2(inv.total - inv.amountPaid))}</td>
                   <td className="px-4 py-3"><StatusBadge status={status} /></td>
+                  <td className="px-4 py-3">
+                    <a href={`/api/billing/invoices/${inv.id}/pdf?download=1`} className="text-sm font-medium text-brand-primary no-underline hover:underline">
+                      Download
+                    </a>
+                  </td>
                 </tr>
               );
             })}
             {invoices.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
+                <td colSpan={7} className="px-4 py-10 text-center text-slate-400">
                   No bills in this period. <Link href="/admin/billing/new" className="text-brand-primary hover:underline">Make one</Link>
                 </td>
               </tr>

@@ -13,7 +13,7 @@ export default async function AdminDashboard() {
   const monthRange = { gte: dayStart(monthStartYmd()), lte: dayEnd(today) };
   const todayRange = { gte: dayStart(today), lte: dayEnd(today) };
 
-  const [monthBills, todayBills, unpaid, products, pendingOrders, recentBills, monthExpenses] = await Promise.all([
+  const [monthBills, todayBills, unpaid, products, pendingOrders, recentBills, monthExpenses, vendorBills] = await Promise.all([
     prisma.invoice.findMany({
       where: { invoiceDate: monthRange, status: { not: "CANCELLED" } },
       select: { total: true, taxableTotal: true, costTotal: true },
@@ -24,7 +24,9 @@ export default async function AdminDashboard() {
     prisma.order.count({ where: { status: "PENDING" } }),
     prisma.invoice.findMany({ orderBy: { createdAt: "desc" }, take: 6 }),
     prisma.expense.aggregate({ where: { date: monthRange }, _sum: { amount: true } }),
+    prisma.purchaseBill.findMany({ select: { total: true, amountPaid: true } }),
   ]);
+  const owedToVendors = round2(vendorBills.reduce((s, b) => s + Math.max(b.total - b.amountPaid, 0), 0));
 
   const monthSales = round2(monthBills.reduce((s, b) => s + b.total, 0));
   const monthProfit = round2(
@@ -43,7 +45,7 @@ export default async function AdminDashboard() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Link href="/admin/billing/new" className="btn-primary">+ New Bill</Link>
-          <Link href="/admin/stock" className="btn-secondary">+ Add Stock</Link>
+          <Link href="/admin/purchases/new" className="btn-secondary">+ New Purchase</Link>
           <Link href="/admin/products/new" className="btn-secondary">+ Add Item</Link>
         </div>
       </div>
@@ -54,6 +56,16 @@ export default async function AdminDashboard() {
         <StatCard label="Net Profit This Month" value={formatINR(monthProfit)} tone={monthProfit >= 0 ? "good" : "bad"} sub="after expenses" />
         <StatCard label="To Collect" value={formatINR(receivable)} tone={receivable > 0.5 ? "warn" : "default"} sub="unpaid bill balances" />
       </div>
+
+      {owedToVendors > 0.5 && (
+        <Link
+          href="/admin/purchases?status=due"
+          className="mt-4 flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 hover:bg-amber-100"
+        >
+          <span>You owe vendors {formatINR(owedToVendors)}</span>
+          <span>View due bills &rarr;</span>
+        </Link>
+      )}
 
       {pendingOrders > 0 && (
         <Link

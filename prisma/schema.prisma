@@ -16,30 +16,31 @@ model Category {
 }
 
 model Product {
-  id           String          @id @default(cuid())
-  name         String
-  slug         String          @unique
-  brand        String
-  description  String
-  price        Float
+  id            String          @id @default(cuid())
+  name          String
+  slug          String          @unique
+  brand         String
+  description   String
+  price         Float
   // Purchase cost per unit (weighted average across stock-in entries). Admin-only:
   // never select this into anything the storefront or public API returns.
-  costPrice    Float           @default(0)
-  hsnCode      String?
-  gstRate      Float           @default(18)
-  lowStockAt   Int             @default(5)
-  unit         String          @default("piece")
-  stock        Int             @default(0)
-  imageUrl     String?
-  featured     Boolean         @default(false)
-  categoryId   String
-  category     Category        @relation(fields: [categoryId], references: [id])
-  image        ProductImage?
-  orderItems   OrderItem[]
-  invoiceItems InvoiceItem[]
-  stockMoves   StockMovement[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  costPrice     Float           @default(0)
+  hsnCode       String?
+  gstRate       Float           @default(18)
+  lowStockAt    Int             @default(5)
+  unit          String          @default("piece")
+  stock         Int             @default(0)
+  imageUrl      String?
+  featured      Boolean         @default(false)
+  categoryId    String
+  category      Category        @relation(fields: [categoryId], references: [id])
+  image         ProductImage?
+  orderItems    OrderItem[]
+  invoiceItems  InvoiceItem[]
+  purchaseItems PurchaseItem[]
+  stockMoves    StockMovement[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 // Uploaded product photos live in the database (resized in the browser first) so the
@@ -157,15 +158,16 @@ model InvoiceItem {
 }
 
 model StockMovement {
-  id        String   @id @default(cuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  type      String // PURCHASE | SALE | SALE_CANCELLED | ADJUSTMENT
-  change    Int
-  unitCost  Float?
-  note      String?
-  invoiceId String?
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type           String // PURCHASE | SALE | SALE_CANCELLED | ADJUSTMENT
+  change         Int
+  unitCost       Float?
+  note           String?
+  invoiceId      String?
+  purchaseBillId String?
+  createdAt      DateTime @default(now())
 
   @@index([productId, createdAt])
 }
@@ -198,4 +200,75 @@ model BusinessSettings {
   invoicePrefix String   @default("MAA")
   terms         String?
   updatedAt     DateTime @updatedAt
+}
+
+model Vendor {
+  id        String         @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  gstin     String?
+  address   String?
+  state     String         @default("Maharashtra")
+  notes     String?
+  purchases PurchaseBill[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+// A bill received from a vendor. Items linked to a product add to its stock.
+model PurchaseBill {
+  id           String               @id @default(cuid())
+  vendorId     String
+  vendor       Vendor               @relation(fields: [vendorId], references: [id])
+  billNumber   String?
+  billDate     DateTime
+  dueDate      DateTime?
+  interState   Boolean              @default(false)
+  pricesIncTax Boolean              @default(false)
+  taxableTotal Float
+  cgst         Float
+  sgst         Float
+  igst         Float
+  roundOff     Float
+  total        Float
+  amountPaid   Float                @default(0)
+  paymentMode  String?
+  notes        String?
+  items        PurchaseItem[]
+  attachments  PurchaseAttachment[]
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@index([billDate])
+}
+
+model PurchaseItem {
+  id             String       @id @default(cuid())
+  purchaseBillId String
+  purchaseBill   PurchaseBill @relation(fields: [purchaseBillId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name           String
+  hsnCode        String?
+  unit           String       @default("piece")
+  quantity       Int
+  rate           Float
+  discountPct    Float        @default(0)
+  gstRate        Float
+  taxableValue   Float
+  gstAmount      Float
+  lineTotal      Float
+}
+
+// Photos or PDFs of the vendor bill and payment receipts.
+model PurchaseAttachment {
+  id             String       @id @default(cuid())
+  purchaseBillId String
+  purchaseBill   PurchaseBill @relation(fields: [purchaseBillId], references: [id], onDelete: Cascade)
+  fileName       String
+  mimeType       String
+  size           Int
+  data           Bytes
+  createdAt      DateTime     @default(now())
 }

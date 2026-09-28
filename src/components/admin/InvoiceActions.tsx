@@ -6,7 +6,17 @@ import { round2 } from "@/lib/gst";
 
 const PAYMENT_MODES = ["Cash", "UPI", "Bank Transfer", "Cheque", "Card"];
 
-export function RecordPayment({ id, total, amountPaid }: { id: string; total: number; amountPaid: number }) {
+export function RecordPayment({
+  id,
+  total,
+  amountPaid,
+  endpoint = `/api/billing/invoices/${id}`,
+}: {
+  id: string;
+  total: number;
+  amountPaid: number;
+  endpoint?: string;
+}) {
   const router = useRouter();
   const balance = round2(total - amountPaid);
   const [amount, setAmount] = useState<number | "">(balance);
@@ -22,7 +32,7 @@ export function RecordPayment({ id, total, amountPaid }: { id: string; total: nu
     if (add <= 0) return;
     setSaving(true);
     setError(null);
-    const res = await fetch(`/api/billing/invoices/${id}`, {
+    const res = await fetch(endpoint, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "payment", amountPaid: round2(amountPaid + add), paymentMode: mode }),

@@ -8,6 +8,8 @@ const COLORS: Record<string, string> = {
   PARTIAL: "bg-amber-100 text-amber-800",
   LOW: "bg-amber-100 text-amber-800",
   OUT: "bg-red-100 text-red-700",
+  DUE: "bg-amber-100 text-amber-800",
+  OVERDUE: "bg-red-100 text-red-700",
 };
 
 export default function StatusBadge({ status }: { status: string }) {

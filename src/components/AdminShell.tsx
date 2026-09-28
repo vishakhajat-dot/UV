@@ -7,6 +7,8 @@ import SiteLogo from "./SiteLogo";
 const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/billing", label: "Bills" },
+  { href: "/admin/purchases", label: "Purchases" },
+  { href: "/admin/vendors", label: "Vendors" },
   { href: "/admin/customers", label: "Customers" },
   { href: "/admin/products", label: "Items" },
   { href: "/admin/stock", label: "Stock" },

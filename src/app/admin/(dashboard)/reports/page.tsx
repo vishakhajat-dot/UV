@@ -10,13 +10,17 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fr
   const range = rangeFromParams(searchParams);
   const dateFilter = { gte: range.gte, lte: range.lte };
 
-  const [invoices, expenses, purchases] = await Promise.all([
+  const [invoices, expenses, purchases, purchaseBills] = await Promise.all([
     prisma.invoice.findMany({
       where: { invoiceDate: dateFilter, status: { not: "CANCELLED" } },
       include: { items: true },
     }),
     prisma.expense.findMany({ where: { date: dateFilter } }),
     prisma.stockMovement.findMany({ where: { type: "PURCHASE", createdAt: dateFilter }, select: { change: true, unitCost: true } }),
+    prisma.purchaseBill.findMany({
+      where: { billDate: dateFilter },
+      select: { total: true, amountPaid: true, cgst: true, sgst: true, igst: true },
+    }),
   ]);
 
   const sales = round2(invoices.reduce((s, i) => s + i.taxableTotal, 0));
@@ -29,6 +33,10 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fr
   const igst = round2(invoices.reduce((s, i) => s + i.igst, 0));
   const billed = round2(invoices.reduce((s, i) => s + i.total, 0));
   const received = round2(invoices.reduce((s, i) => s + i.amountPaid, 0));
+  const purchaseBillTotal = round2(purchaseBills.reduce((s, p) => s + p.total, 0));
+  const purchaseBillDue = round2(purchaseBills.reduce((s, p) => s + p.total - p.amountPaid, 0));
+  const inputGst = round2(purchaseBills.reduce((s, p) => s + p.cgst + p.sgst + p.igst, 0));
+  const outputGst = round2(cgst + sgst + igst);
   const purchased = round2(purchases.reduce((s, p) => s + p.change * (p.unitCost ?? 0), 0));
 
   const b2b = invoices.filter((i) => i.billGstin);
@@ -101,18 +109,22 @@ export default async function ReportsPage({ searchParams }: { searchParams: { fr
           <dl className="tabular mt-5 space-y-2 border-t border-sky-100 pt-4 text-sm">
             <Line label="Amount received on these bills" value={formatINR(received)} muted />
             <Line label="Still to collect" value={formatINR(round2(billed - received))} muted />
-            <Line label="Stock bought in this period" value={formatINR(purchased)} muted />
+            <Line label="Stock bought in this period (at cost)" value={formatINR(purchased)} muted />
+            <Line label={`Purchase bills (${purchaseBills.length})`} value={formatINR(purchaseBillTotal)} muted />
+            <Line label="Still to pay vendors on these" value={formatINR(purchaseBillDue)} muted />
           </dl>
         </div>
 
         <div className="card p-5">
           <h2 className="font-bold text-brand-navy">GST summary</h2>
-          <p className="text-xs text-slate-500">GST collected is owed to the government; it is not counted as income above.</p>
+          <p className="text-xs text-slate-500">GST is not counted as income or cost above. Input credit only counts for purchase bills from GST-registered vendors.</p>
           <dl className="tabular mt-3 space-y-2 text-sm">
             <Line label="CGST collected" value={formatINR(cgst)} />
             <Line label="SGST collected" value={formatINR(sgst)} />
             <Line label="IGST collected" value={formatINR(igst)} />
-            <Line label="Total GST" value={formatINR(round2(cgst + sgst + igst))} strong />
+            <Line label="Total GST collected (output)" value={formatINR(outputGst)} strong />
+            <Line label="Less: GST paid on purchases (input credit)" value={`- ${formatINR(inputGst)}`} />
+            <Line label={outputGst - inputGst >= 0 ? "Net GST payable" : "Extra input credit carried forward"} value={formatINR(Math.abs(round2(outputGst - inputGst)))} strong />
           </dl>
           <table className="tabular mt-5 w-full text-left text-sm">
             <thead className="table-head">

@@ -1,13 +1,16 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { paymentStatus } from "@/lib/billing";
 import { formatDate } from "@/lib/dates";
 import { formatINR, round2, stateLabel } from "@/lib/gst";
 import { getSettings } from "@/lib/settings";
-import { mailtoLink, whatsappLink } from "@/lib/whatsapp";
+import { mailtoLink } from "@/lib/whatsapp";
+import { billPath } from "@/lib/billLink";
 import StatusBadge from "@/components/StatusBadge";
 import { CancelInvoiceButton, RecordPayment } from "@/components/admin/InvoiceActions";
+import WhatsAppBillButtons from "@/components/admin/WhatsAppBillButtons";
 
 export const revalidate = 0;
 
@@ -33,7 +36,15 @@ export default async function BillDetailPage({ params }: { params: { id: string 
     (balance > 0 ? `\nBalance due: ${formatINR(balance)}` : "") +
     (settings.upiId ? `\nUPI: ${settings.upiId}` : "") +
     `\n\n${settings.ownerName}\n${settings.ownerEmail}`;
-  const phone = invoice.billPhone?.replace(/\D/g, "").slice(-10);
+  const phone = invoice.billPhone?.replace(/\D/g, "").slice(-10) || null;
+  const h = headers();
+  const origin = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("x-forwarded-host") ?? h.get("host")}`;
+  const billLink = origin + billPath(invoice.id);
+  const linkMessage = message.replace(
+    `\n\n${settings.ownerName}`,
+    `\n\nView / download your bill:\n${billLink}\n\n${settings.ownerName}`
+  );
+  const fileName = `${invoice.invoiceNumber.replace(/[^A-Za-z0-9-]+/g, "_")}.pdf`;
 
   return (
     <div>
@@ -58,23 +69,23 @@ export default async function BillDetailPage({ params }: { params: { id: string 
         <div className="flex flex-wrap gap-2">
           <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="btn-primary">View / Print PDF</a>
           <a href={`${pdfUrl}?download=1`} className="btn-secondary">Download</a>
-          {phone && (
-            <a href={whatsappLink(message, `91${phone}`)} target="_blank" rel="noopener noreferrer" className="btn-whatsapp">
-              WhatsApp
-            </a>
-          )}
           {invoice.billEmail && (
-            <a href={mailtoLink(`Invoice ${invoice.invoiceNumber} - ${settings.businessName}`, message, invoice.billEmail)} className="btn-secondary">
+            <a href={mailtoLink(`Invoice ${invoice.invoiceNumber} - ${settings.businessName}`, linkMessage, invoice.billEmail)} className="btn-secondary">
               Email
             </a>
           )}
         </div>
       </div>
-      {(phone || invoice.billEmail) && (
-        <p className="mt-2 text-xs text-slate-500">
-          WhatsApp and Email open a pre-written message. Download the PDF first and attach it.
+      <div className="mt-4 rounded-xl border border-[#25D366]/30 bg-[#25D366]/5 p-4">
+        <p className="mb-3 text-sm font-semibold text-brand-navy">
+          Send to customer on WhatsApp{phone ? ` (${phone})` : ""}
         </p>
-      )}
+        <WhatsAppBillButtons pdfUrl={pdfUrl} fileName={fileName} phone={phone} message={message} linkMessage={linkMessage} />
+        <p className="mt-2 text-xs text-slate-500">
+          &quot;Send PDF&quot; attaches the bill file (works on phones and with the WhatsApp app). &quot;Send bill link&quot; opens the
+          customer&apos;s chat with a private link to the PDF, on any device.
+        </p>
+      </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <div className="card overflow-x-auto p-5 lg:col-span-2">

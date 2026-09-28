@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GST_RATES, round2 } from "@/lib/gst";
+import { resizeImage } from "@/lib/resizeImage";
 
 type Category = { id: string; name: string };
 
@@ -23,25 +24,6 @@ type ProductFormData = {
   featured: boolean;
   categoryId: string;
 };
-
-const MAX_SIDE = 1000;
-
-// Shrink photos in the browser before upload: phone pictures are several MB, and a
-// 1000px JPEG looks the same on the site at a fraction of the size.
-async function resizeImage(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bitmap.width * scale);
-  canvas.height = Math.round(bitmap.height * scale);
-  const ctx = canvas.getContext("2d")!;
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Could not read image"))), "image/jpeg", 0.85)
-  );
-}
 
 export default function ProductForm({
   categories,

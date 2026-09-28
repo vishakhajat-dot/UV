@@ -121,3 +121,26 @@ export const settingsSchema = z.object({
   invoicePrefix: z.string().trim().min(1).max(10).regex(/^[A-Za-z0-9-]+$/, "Letters, numbers and dashes only"),
   terms: optionalText,
 });
+
+export const vendorSchema = z.object({
+  name: z.string().trim().min(2, "Vendor name is required"),
+  phone: optionalText,
+  email: z.string().trim().email("Enter a valid email").optional().nullable().or(z.literal("")),
+  gstin: optionalText,
+  address: optionalText,
+  state: z.string().min(2),
+  notes: optionalText,
+});
+
+export const purchaseSchema = z.object({
+  vendorId: z.string().optional().nullable(),
+  vendor: vendorSchema.pick({ name: true, phone: true, gstin: true, address: true, state: true }),
+  billNumber: optionalText,
+  billDate: isoDate,
+  dueDate: isoDate.optional().nullable().or(z.literal("")),
+  pricesIncTax: z.boolean(),
+  items: z.array(invoiceItemSchema).min(1, "Add at least one item"),
+  amountPaid: z.number().nonnegative(),
+  paymentMode: optionalText,
+  notes: optionalText,
+});
